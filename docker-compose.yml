@@ -10,7 +10,7 @@ services:
       - ./filesystem/start.sh:/start.sh
     command: ["/bin/sh", "/start.sh"]
     ports:
-      - "3001:3001"
+      - "4001:3001"
     restart: unless-stopped
 
   mcp-shell:
@@ -21,7 +21,7 @@ services:
     working_dir: /app
     command: ["npm", "start"]
     ports:
-      - "3002:3002"
+      - "4002:3002"
     restart: unless-stopped
 
   mcp-gateway:
@@ -30,7 +30,7 @@ services:
       - ./gateway:/app
     working_dir: /app
     ports:
-      - "3000:3000"
+      - "4000:3000"
     depends_on:
       - mcp-filesystem
       - mcp-shell
