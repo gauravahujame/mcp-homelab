@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   mcp-filesystem:
-    image: node:18-alpine
+    image: node:20-alpine
     volumes:
       - ~/.config:/allowed/config:ro
       - ~/.dotfiles:/allowed/dotfiles:ro  
@@ -14,27 +14,20 @@ services:
     restart: unless-stopped
 
   mcp-shell:
-    image: node:18-alpine
+    build: ./shell
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - ./shell:/app
-    working_dir: /app
-    command: ["npm", "start"]
     ports:
       - "4002:3002"
     restart: unless-stopped
 
   mcp-gateway:
-    image: node:18-alpine
-    volumes:
-      - ./gateway:/app
-    working_dir: /app
+    build: ./gateway
     ports:
       - "4000:3000"
     depends_on:
       - mcp-filesystem
       - mcp-shell
-    command: ["npm", "start"]
     restart: unless-stopped
 
 networks:
