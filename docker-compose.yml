@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  mcp-filesystem:
+    image: node:18-alpine
+    volumes:
+      - ~/.config:/allowed/config:ro
+      - ~/.dotfiles:/allowed/dotfiles:ro  
+      - ~/workspace:/allowed/workspace:rw
+      - ./filesystem/start.sh:/start.sh
+    command: ["/bin/sh", "/start.sh"]
+    ports:
+      - "3001:3001"
+    restart: unless-stopped
+
+  mcp-shell:
+    image: node:18-alpine
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./shell:/app
+    working_dir: /app
+    command: ["npm", "start"]
+    ports:
+      - "3002:3002"
+    restart: unless-stopped
+
+  mcp-gateway:
+    image: node:18-alpine
+    volumes:
+      - ./gateway:/app
+    working_dir: /app
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mcp-filesystem
+      - mcp-shell
+    command: ["npm", "start"]
+    restart: unless-stopped
+
+networks:
+  default:
+    name: mcp-homelab
